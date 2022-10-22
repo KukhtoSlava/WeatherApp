@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="city">City</string>
+    <string name="hourly_forecast">Hourly forecast</string>
+    <string name="weekly_forecast">Weekly Forecast</string>
+    <string name="close">Close</string>
+    <string name="dont_know">¯\\_(ツ)_/¯</string>
+    <string name="degree">%1$s°</string>
+    <string name="min_max">H:%1$s°  L:%2$s°</string>
+    <string name="retry">Retry</string>
+    <string name="unknown_error">Unknown error</string>
+    <string name="description_search">Start typing the name of the locality</string>
+    <string name="empty_result_search">Nothing found</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="feels_like">Feels like</string>
+    <string name="wind">Wind</string>
+    <string name="speed">%1$s \nkm/h</string>
+    <string name="humidity">Humidity</string>
+    <string name="humidity_percent">%1$s%%</string>
+    <string name="visibility">Visibility</string>
+    <string name="visibility_meters">%1$s km</string>
+    <string name="pressure">Pressure</string>
+    <string name="pressure_metric">%1$s \nmm Hg</string>
+    <string name="uvi">UV index</string>
+    <string name="description_title">%1$s° | %2$s</string>
+</resources>

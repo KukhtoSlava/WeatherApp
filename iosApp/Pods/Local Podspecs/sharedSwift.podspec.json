@@ -1,0 +1,26 @@
+{
+  "name": "sharedSwift",
+  "version": "1.0",
+  "homepage": "Link to a Kotlin/Native module homepage",
+  "source": {
+    "git": "Not Published",
+    "tag": "Cocoapods/sharedSwift/1.0"
+  },
+  "authors": "",
+  "license": "",
+  "summary": "Some description for a Kotlin/Native module",
+  "module_name": "MultiPlatformLibrarySwift",
+  "static_framework": false,
+  "dependencies": {
+    "shared": [
+
+    ]
+  },
+  "source_files": "build/cocoapods/framework/MultiPlatformLibrarySwift/**/*.{h,m,swift}",
+  "platforms": {
+    "osx": null,
+    "ios": null,
+    "tvos": null,
+    "watchos": null
+  }
+}

@@ -1,0 +1,11 @@
+framework module mokoMvvmFlowSwiftUI {
+  umbrella header "mokoMvvmFlowSwiftUI.h"
+
+  export *
+  module * { export * }
+}
+
+module mokoMvvmFlowSwiftUI.Swift {
+    header "mokoMvvmFlowSwiftUI-Swift.h"
+    requires objc
+}

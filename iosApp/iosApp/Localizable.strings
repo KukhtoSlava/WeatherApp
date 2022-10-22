@@ -1,0 +1,33 @@
+/* 
+  Localizable.strings
+  iosApp
+
+  Created by Slava Kukhto on 20/10/2022.
+  Copyright © 2022 orgName. All rights reserved.
+*/
+
+"app_name" = "WeatherApp";
+"city" = "City";
+"hourly_forecast" = "Hourly forecast";
+"weekly_forecast" = "Weekly Forecast";
+"close" = "Close";
+"dont_know" = "¯\\_(ツ)_/¯";
+"degree" = "%d°";
+"min_max" = "H:%ld°  L:%2d°";
+"retry" = "Retry";
+"unknown_error" = "Unknown error";
+"description_search" = "Start typing the name of the locality";
+"empty_result_search" = "Nothing found";
+"sunrise" = "Sunrise";
+"sunset" = "Sunset";
+"feels_like" = "Feels like";
+"wind" = "Wind";
+"speed" = "%@ km/h";
+"humidity" = "Humidity";
+"humidity_percent" = "%d%%";
+"visibility" = "Visibility";
+"visibility_meters" = "%@ km";
+"pressure" = "Pressure";
+"pressure_metric" = "%@\nmm Hg";
+"uvi" = "UV index";
+"description_title" = "%ld° | %@";

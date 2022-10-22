@@ -1,0 +1,15 @@
+CREATE TABLE CityDb (
+  placeId TEXT NOT NULL PRIMARY KEY,
+  name TEXT NOT NULL,
+  lat REAL NOT NULL,
+  lon REAL NOT NULL
+);
+
+insertItem:
+INSERT OR REPLACE INTO CityDb (placeId, name, lat, lon) VALUES (?, ?,?, ?);
+
+selectAll:
+SELECT * FROM CityDb ORDER BY placeId;
+
+deleteByName:
+DELETE FROM CityDb WHERE name = ?;
