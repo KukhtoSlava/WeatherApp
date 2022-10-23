@@ -3,13 +3,6 @@
 ![Screenshot](resources/cover.png)
 
 **Kotlin Multiplatform** project with SwiftUI, Jetpack Compose.
-- Android (Jetpack compose)
-- iOS (SwiftUI)
-
-Resources:
-- [Places API](https://developers.google.com/maps/documentation/places/web-service)
-- [OpenWeather](https://openweathermap.org)
-- [Weather App UI Design (Community)](https://www.figma.com/file/YnSFgFbSMqGxXKPyN27aOh/Weather-App-UI-Design-(Community)?node-id=2%3A4)
 
 ### Modern Development
 - Kotlin Multiplatform
@@ -20,11 +13,17 @@ Resources:
 - FlowRedux State Management
 - Clean Architecture
 
-### UI
-
+### Android / iOS 
 ![Screenshot](resources/android.gif)  ![Screenshot](resources/ios.gif)
 
-Tech Stacks:
+### Resources:
+
+- [Places API](https://developers.google.com/maps/documentation/places/web-service)
+- [OpenWeather](https://openweathermap.org)
+- [Weather App UI Design (Community)](https://www.figma.com/file/YnSFgFbSMqGxXKPyN27aOh/Weather-App-UI-Design-(Community)?node-id=2%3A4)
+
+
+### Tech Stacks:
 
 - [Coroutine (official)](https://github.com/Kotlin/kotlinx.coroutines)
 - [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)
