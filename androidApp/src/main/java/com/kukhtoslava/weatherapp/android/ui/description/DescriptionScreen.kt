@@ -231,7 +231,6 @@ fun DescriptionUI(
                             .fillMaxWidth()
                             .padding(start = 22.dp),
                         text = sunrise,
-                        maxLines = 1,
                         style = Type.body7
                     )
                 }
@@ -259,8 +258,7 @@ fun DescriptionUI(
                             .fillMaxWidth()
                             .padding(start = 22.dp),
                         style = Type.body7,
-                        text = sunset,
-                        maxLines = 1
+                        text = sunset
                     )
                 }
             }
@@ -294,8 +292,7 @@ fun DescriptionUI(
                             .fillMaxWidth()
                             .padding(start = 22.dp),
                         text = feelLikes,
-                        style = Type.body7,
-                        maxLines = 1
+                        style = Type.body7
                     )
                 }
 
@@ -322,8 +319,7 @@ fun DescriptionUI(
                             .fillMaxWidth()
                             .padding(start = 22.dp),
                         text = uviIndex,
-                        style = Type.body7,
-                        maxLines = 1
+                        style = Type.body7
                     )
                 }
             }
@@ -357,8 +353,7 @@ fun DescriptionUI(
                             .fillMaxWidth()
                             .padding(start = 22.dp),
                         text = wind,
-                        style = Type.body7,
-                        maxLines = 1
+                        style = Type.body7
                     )
                 }
 
@@ -385,8 +380,7 @@ fun DescriptionUI(
                             .fillMaxWidth()
                             .padding(start = 22.dp),
                         text = humidity,
-                        style = Type.body7,
-                        maxLines = 1
+                        style = Type.body7
                     )
                 }
             }
@@ -422,8 +416,7 @@ fun DescriptionUI(
                             .padding(start = 22.dp),
                         text = visibility,
                         color = Color.White,
-                        style = Type.body7,
-                        maxLines = 1
+                        style = Type.body7
                     )
                 }
 
@@ -450,8 +443,7 @@ fun DescriptionUI(
                             .fillMaxWidth()
                             .padding(start = 22.dp),
                         text = pressure,
-                        style = Type.body7,
-                        maxLines = 2
+                        style = Type.body7
                     )
                 }
             }
