@@ -10,7 +10,7 @@ data class Result(
     @SerialName("name")
     val name: String,
     @SerialName("formatted_address")
-    val formattedAddress: String,
+    val formattedAddress: String? = null,
     @SerialName("place_id")
     val placeId: String
 )

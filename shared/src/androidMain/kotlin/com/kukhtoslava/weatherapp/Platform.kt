@@ -1,9 +1,10 @@
 package com.kukhtoslava.weatherapp
 
 import android.app.Application
-import android.content.Context
 import com.kukhtoslava.weatherapp.data.KMMPreference
+import com.kukhtoslava.weatherapp.data.source.LocationService
 import com.kukhtoslava.weatherapp.utils.AppCoroutineDispatchers
+import com.kukhtoslava.weatherapp.utils.PermissionsWrapperController
 import com.kukhtoslava.weatherapp.utils.createHttpClient
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import io.ktor.client.*
@@ -33,6 +34,14 @@ actual fun provideHttpClient(): HttpClient {
 actual fun provideCache(): CityDBDatabase {
     val driver = AndroidSqliteDriver(CityDBDatabase.Schema, appContext, "city.db")
     return CityDBDatabase(driver)
+}
+
+actual fun provideLocationService(): LocationService {
+    return AndroidLocationService(appContext)
+}
+
+actual fun providePermissionsWrapperController(): PermissionsWrapperController {
+    return AndroidPermissionsWrapperController(appContext)
 }
 
 actual fun provideKMMPreference(): KMMPreference {

@@ -28,6 +28,7 @@ import com.kukhtoslava.weatherapp.presentation.description.DescriptionAction
 import com.kukhtoslava.weatherapp.presentation.description.DescriptionEvent
 import com.kukhtoslava.weatherapp.presentation.description.DescriptionState
 import com.kukhtoslava.weatherapp.presentation.description.DescriptionViewModel
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -45,16 +46,11 @@ fun DescriptionScreen(
     LaunchedEffect(Unit) {
         viewModel.dispatch(DescriptionAction.Load)
     }
-    LaunchedEffect(eventFlow) {
-        eventFlow.collect { event ->
-            when (event) {
-                DescriptionEvent.Close -> navHostController.popBackStack()
-            }
-        }
-    }
 
     DescriptionUI(
         state = state,
+        eventFlow = eventFlow,
+        navHostController = navHostController,
         closeClicked = { viewModel.dispatch(action = DescriptionAction.Close) }
     )
 }
@@ -62,10 +58,20 @@ fun DescriptionScreen(
 @Composable
 fun DescriptionUI(
     state: DescriptionState,
+    eventFlow: Flow<DescriptionEvent>,
+    navHostController: NavHostController,
     closeClicked: () -> Unit
 ) {
 
     val context = LocalContext.current
+
+    LaunchedEffect(eventFlow) {
+        eventFlow.collect { event ->
+            when (event) {
+                DescriptionEvent.Close -> navHostController.popBackStack()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier

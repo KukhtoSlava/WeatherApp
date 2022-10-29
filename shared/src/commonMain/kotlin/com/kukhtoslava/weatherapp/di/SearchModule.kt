@@ -1,8 +1,6 @@
 package com.kukhtoslava.weatherapp.di
 
-import com.kukhtoslava.weatherapp.domain.usecases.GetCurrentPlaceUseCase
-import com.kukhtoslava.weatherapp.domain.usecases.GetPredictionsUseCase
-import com.kukhtoslava.weatherapp.domain.usecases.SaveCurrentPlaceUseCase
+import com.kukhtoslava.weatherapp.domain.usecases.*
 import org.kodein.di.*
 
 val searchDI = LazyDI {
@@ -24,5 +22,17 @@ val searchModule = DI.Module(SEARCH_MODULE) {
 
     bind<GetCurrentPlaceUseCase>() with multiton {
         GetCurrentPlaceUseCase(instance())
+    }
+
+    bind<GetCityByLocationUseCase>() with multiton {
+        GetCityByLocationUseCase(instance())
+    }
+
+    bind<GetCurrentDeviceLocationUseCase>() with multiton {
+        GetCurrentDeviceLocationUseCase(instance())
+    }
+
+    bind<IsLocationEnabledUseCase>() with multiton {
+        IsLocationEnabledUseCase(instance())
     }
 }

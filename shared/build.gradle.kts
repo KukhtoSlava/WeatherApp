@@ -64,11 +64,14 @@ kotlin {
                 api(deps.napier)
 
                 // Kodein
-                implementation(deps.kodein.core)
+                api(deps.kodein.core)
 
                 // MVVM
                 api(deps.mvvm.core)
                 api(deps.mvvm.flow)
+
+                // Permissions
+                implementation(deps.permissions.core)
             }
         }
         val commonTest by getting {

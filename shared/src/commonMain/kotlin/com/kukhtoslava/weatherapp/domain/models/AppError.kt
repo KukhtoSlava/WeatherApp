@@ -29,5 +29,12 @@ sealed class AppError : RuntimeException {
         class UnknownException(cause: Throwable?) : LocalStorageException(cause)
     }
 
+    sealed class LocationException(cause: Throwable?) : AppError(cause) {
+
+        class LocationNotEnabledException(cause: Throwable?) : LocationException(cause)
+
+        class UnknownException(cause: Throwable?) : LocationException(cause)
+    }
+
     class UnknownException(cause: Throwable?) : AppError(cause)
 }

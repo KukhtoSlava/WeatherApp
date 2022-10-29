@@ -13,10 +13,20 @@ import MultiPlatformLibrary
 
 struct SearchScreen: View {
     
+    private enum AlertType: String, Identifiable {
+        
+        var id: String { rawValue }
+        
+        case deniedAlwaysLocationDialog = "deniedAlwaysLocationDialog"
+        case locationDisabledDialog = "locationDisabledDialog"
+        case unknownErrorLocationDialog = "unknownErrorLocationDialog"
+    }
+    
     @EnvironmentObject var globalDataHolder: GlobalDataHolder
     @ObservedObject var viewModel: SearchViewModel = SearchViewModel()
     
     @State private var searchText = ""
+    @State private var alertType: AlertType? = nil
     @State private var state: SearchState = SearchState(
         isExistCurrentPlace: false,
         term: "",
@@ -82,15 +92,71 @@ struct SearchScreen: View {
         )
         .onReceive(createPublisher(viewModel.eventFlow)) { event in
             let eventKt = SearchEventKs(event)
+            print(eventKt)
             switch(eventKt) {
             case .close:
                 withAnimation(.easeInOut(duration: 0.4)) {
                     globalDataHolder.currentAppScreen = .main
                 }
                 break
+            case .deniedAlwaysMessage:
+                self.alertType = .deniedAlwaysLocationDialog
+                break
+            case .deniedMessage:
+                // not impossible in ios
+                break
+            case .errorMessage:
+                self.alertType = .unknownErrorLocationDialog
+                break
+            case .disabledMessage:
+                self.alertType = .locationDisabledDialog
+                break
             }}
         .onReceive(createPublisher(viewModel.stateFlow)) { state in
             self.state = state
+        }
+        .alert(item: $alertType) { type in
+            switch(type) {
+            case .deniedAlwaysLocationDialog:
+                return Alert(
+                    title: Text("location_permission_title"),
+                    message: Text("location_permission_description"),
+                    primaryButton: .default(Text("close")) {
+                        self.alertType = nil
+                    },
+                    secondaryButton: .default(Text("open_settings")) {
+                        self.alertType = nil
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                )
+                break
+            case .unknownErrorLocationDialog:
+                return Alert(
+                    title: Text("unknown_error"),
+                    message: Text("something_went_wrong"),
+                    dismissButton: .default(Text("close")) {
+                        self.alertType = nil
+                    }
+                )
+                break
+            case .locationDisabledDialog:
+                return Alert(
+                    title: Text("location_disabled"),
+                    message: Text("location_disabled_description"),
+                    primaryButton: .default(Text("close")) {
+                        self.alertType = nil
+                    },
+                    secondaryButton: .default(Text("open_settings")) {
+                        self.alertType = nil
+                        if let url = URL(string: "\(UIApplication.openSettingsURLString)&path=LOCATION_SERVICES") {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                )
+                break
+            }
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
@@ -169,12 +235,21 @@ fileprivate extension SearchScreen {
     func prepareStartSearchDescription() -> some View {
         VStack {
             Spacer()
-            Text("description_search")
+            Button(action: {
+                viewModel.dispatch(action: SearchActionClickLocation())
+            }, label: {
+                (Text("description_search_start")
+                 + Text("description_location_end")
+                    .foregroundColor(Color(ColorUtils.Whisper50))
+                    .underline()
+                )
                 .fontWeight(.semibold)
-                .multilineTextAlignment(.center)
                 .font(.system(size: 22))
                 .foregroundColor(.white)
                 .padding(16)
+                .fixedSize(horizontal: false, vertical: true)
+            })
+            .padding([.horizontal], 20)
             Spacer()
         }
     }

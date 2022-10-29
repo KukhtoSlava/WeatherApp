@@ -19,6 +19,14 @@ sealed interface SearchAction {
         override fun reduce(state: SearchState) = state
     }
 
+    object ClickLocation : SearchAction {
+        override fun reduce(state: SearchState): SearchState {
+            return state.copy(
+                isLoading = true
+            )
+        }
+    }
+
     object CloseScreen : SearchAction {
         override fun reduce(state: SearchState) = state
     }
@@ -48,6 +56,42 @@ internal sealed interface SideEffectAction : SearchAction {
         override fun reduce(state: SearchState): SearchState {
             return state.copy(
                 isExistCurrentPlace = isExist
+            )
+        }
+    }
+
+    object LocationDenied : SideEffectAction {
+        override fun reduce(state: SearchState): SearchState {
+            return state.copy(
+                isLoading = false,
+            )
+        }
+    }
+
+    object LocationAlwaysDenied : SideEffectAction {
+        override fun reduce(state: SearchState): SearchState {
+            return state.copy(
+                isLoading = false,
+            )
+        }
+    }
+
+    object LocationDisabled : SideEffectAction {
+        override fun reduce(state: SearchState): SearchState {
+            return state.copy(
+                isLoading = false,
+            )
+        }
+    }
+
+    object LocationSuccess : SideEffectAction {
+        override fun reduce(state: SearchState) = state
+    }
+
+    data class LocationUnknownError(val error: AppError?) : SideEffectAction {
+        override fun reduce(state: SearchState): SearchState {
+            return state.copy(
+                isLoading = false,
             )
         }
     }
@@ -83,4 +127,10 @@ internal fun SearchAction.toSearchSingleEventOrNull(): SearchEvent? =
         is SideEffectAction.TextChanged -> null
         is SideEffectAction.CityChanged -> SearchEvent.Close
         is SideEffectAction.CurrentPlaceChecked -> null
+        is SearchAction.ClickLocation -> null
+        is SideEffectAction.LocationAlwaysDenied -> SearchEvent.DeniedAlwaysMessage
+        is SideEffectAction.LocationDenied -> SearchEvent.DeniedMessage
+        is SideEffectAction.LocationSuccess -> SearchEvent.Close
+        is SideEffectAction.LocationUnknownError -> SearchEvent.ErrorMessage(this.error?.message)
+        is SideEffectAction.LocationDisabled -> SearchEvent.DisabledMessage
     }

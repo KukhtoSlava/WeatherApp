@@ -1,12 +1,21 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.SplashScreen">
+    <style name="SplashAppTheme" parent="Theme.SplashScreen">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/icon_weather</item>
-        <item name="postSplashScreenTheme">@style/AppTheme</item>
+        <item name="postSplashScreenTheme">@style/SplashAppTheme</item>
         <item name="windowSplashScreenBackground">@color/splash_background</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:background">@color/splash_background</item>
+    </style>
+
+    <style name="MainAppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@color/splash_background</item>
         <item name="android:background">@color/splash_background</item>
     </style>
 </resources>

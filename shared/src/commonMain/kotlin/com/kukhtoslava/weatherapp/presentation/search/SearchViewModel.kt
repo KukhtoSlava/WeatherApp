@@ -3,9 +3,8 @@ package com.kukhtoslava.weatherapp.presentation.search
 import com.kukhtoslava.flowredux.createDefaultFlowReduxStore
 import com.kukhtoslava.weatherapp.data.AppErrorMapper
 import com.kukhtoslava.weatherapp.di.searchDI
-import com.kukhtoslava.weatherapp.domain.usecases.GetCurrentPlaceUseCase
-import com.kukhtoslava.weatherapp.domain.usecases.GetPredictionsUseCase
-import com.kukhtoslava.weatherapp.domain.usecases.SaveCurrentPlaceUseCase
+import com.kukhtoslava.weatherapp.domain.usecases.*
+import com.kukhtoslava.weatherapp.utils.PermissionsWrapperController
 import dev.icerock.moko.mvvm.flow.CFlow
 import dev.icerock.moko.mvvm.flow.CStateFlow
 import dev.icerock.moko.mvvm.flow.cFlow
@@ -23,6 +22,10 @@ class SearchViewModel : ViewModel() {
     private val getPredictionsUseCase: GetPredictionsUseCase by searchDI.instance()
     private val saveCurrentPlaceUseCase: SaveCurrentPlaceUseCase by searchDI.instance()
     private val getCurrentPlaceUseCase: GetCurrentPlaceUseCase by searchDI.instance()
+    private val getCurrentDeviceLocationUseCase: GetCurrentDeviceLocationUseCase by searchDI.instance()
+    private val getCityByLocationUseCase: GetCityByLocationUseCase by searchDI.instance()
+    private val permissionsWrapperController: PermissionsWrapperController by searchDI.instance()
+    private val isLocationEnabledUseCase: IsLocationEnabledUseCase by searchDI.instance()
     private val appErrorMapper: AppErrorMapper by searchDI.instance()
 
     private val store = createDefaultFlowReduxStore(
@@ -32,6 +35,10 @@ class SearchViewModel : ViewModel() {
             getPredictionsUseCase = getPredictionsUseCase,
             saveCurrentPlaceUseCase = saveCurrentPlaceUseCase,
             getCurrentPlaceUseCase = getCurrentPlaceUseCase,
+            getCurrentDeviceLocationUseCase = getCurrentDeviceLocationUseCase,
+            getCityByLocationUseCase = getCityByLocationUseCase,
+            permissionsWrapperController = permissionsWrapperController,
+            isLocationEnabledUseCase = isLocationEnabledUseCase,
             appErrorMapper = appErrorMapper
         ).sideEffects,
         reducer = { state, action -> action.reduce(state) }

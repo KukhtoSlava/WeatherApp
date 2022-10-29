@@ -40,7 +40,7 @@ internal class MainSideEffect(
                             getCityByPlaceIdUseCase(place.placeId)
                         }.map { placeInfo ->
                             DBPlace(
-                                name = placeInfo.result.formattedAddress,
+                                name = placeInfo.result.formattedAddress ?: placeInfo.result.name,
                                 placeId = placeInfo.result.placeId,
                                 lat = placeInfo.result.geometry.location.lat,
                                 lon = placeInfo.result.geometry.location.lng

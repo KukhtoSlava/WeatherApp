@@ -9,4 +9,7 @@ class PlaceRepositoryImpl constructor(private val placeApiService: PlaceApiServi
 
     override suspend fun getCityByPlaceId(placeId: String) =
         placeApiService.getCityByPlaceId(placeId)
+
+    override suspend fun getCityByLocation(lat: Double, lon: Double) =
+        placeApiService.getCityByLocation(lat = lat, lon = lon)
 }

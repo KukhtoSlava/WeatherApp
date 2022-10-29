@@ -34,6 +34,7 @@ import com.kukhtoslava.weatherapp.presentation.catalog.CatalogAction
 import com.kukhtoslava.weatherapp.presentation.catalog.CatalogEvent
 import com.kukhtoslava.weatherapp.presentation.catalog.CatalogState
 import com.kukhtoslava.weatherapp.presentation.catalog.CatalogViewModel
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -51,16 +52,11 @@ fun CatalogScreen(
     LaunchedEffect(Unit) {
         viewModel.dispatch(CatalogAction.Load)
     }
-    LaunchedEffect(eventFlow) {
-        eventFlow.collect { event ->
-            when (event) {
-                CatalogEvent.Close -> navHostController.popBackStack()
-            }
-        }
-    }
 
     CatalogUI(
         state = state,
+        eventFlow = eventFlow,
+        navHostController = navHostController,
         itemClicked = { placeId, placeName ->
             viewModel.dispatch(
                 action = CatalogAction.ClickCity(
@@ -77,10 +73,20 @@ fun CatalogScreen(
 @Composable
 fun CatalogUI(
     state: CatalogState,
+    eventFlow: Flow<CatalogEvent>,
+    navHostController: NavHostController,
     itemClicked: (placeId: String, placeName: String) -> Unit,
     closeClicked: () -> Unit,
     onRetryClicked: () -> Unit
 ) {
+
+    LaunchedEffect(eventFlow) {
+        eventFlow.collect { event ->
+            when (event) {
+                CatalogEvent.Close -> navHostController.popBackStack()
+            }
+        }
+    }
 
     Column(
         modifier = Modifier

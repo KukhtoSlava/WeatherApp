@@ -14,6 +14,9 @@ import com.kukhtoslava.weatherapp.android.ui.description.DescriptionScreen
 import com.kukhtoslava.weatherapp.android.ui.main.MainScreen
 import com.kukhtoslava.weatherapp.android.ui.search.SearchScreen
 
+private const val OFFSET_Y = 600
+private const val DURATION_IN_MILLIS = 300
+
 @ExperimentalAnimationApi
 @Composable
 fun MainContainer() {
@@ -24,46 +27,46 @@ fun MainContainer() {
         }
         composable(Screen.Search.route, enterTransition = {
             slideInVertically(
-                initialOffsetY = { 600 }, animationSpec = tween(
-                    durationMillis = 300, easing = FastOutSlowInEasing
+                initialOffsetY = { OFFSET_Y }, animationSpec = tween(
+                    durationMillis = DURATION_IN_MILLIS, easing = FastOutSlowInEasing
                 )
-            ) + fadeIn(animationSpec = tween(300))
+            ) + fadeIn(animationSpec = tween(DURATION_IN_MILLIS))
         }, exitTransition = {
             slideOutVertically(
-                targetOffsetY = { 600 }, animationSpec = tween(
-                    durationMillis = 300, easing = FastOutSlowInEasing
+                targetOffsetY = { OFFSET_Y }, animationSpec = tween(
+                    durationMillis = DURATION_IN_MILLIS, easing = FastOutSlowInEasing
                 )
-            ) + fadeOut(animationSpec = tween(300))
+            ) + fadeOut(animationSpec = tween(DURATION_IN_MILLIS))
         }) {
             SearchScreen(navController, viewModel())
         }
         composable(Screen.Description.route, enterTransition = {
             slideInVertically(
-                initialOffsetY = { 600 }, animationSpec = tween(
-                    durationMillis = 300, easing = FastOutSlowInEasing
+                initialOffsetY = { DURATION_IN_MILLIS }, animationSpec = tween(
+                    durationMillis = DURATION_IN_MILLIS, easing = FastOutSlowInEasing
                 )
-            ) + fadeIn(animationSpec = tween(300))
+            ) + fadeIn(animationSpec = tween(DURATION_IN_MILLIS))
         }, exitTransition = {
             slideOutVertically(
-                targetOffsetY = { 600 }, animationSpec = tween(
-                    durationMillis = 300, easing = FastOutSlowInEasing
+                targetOffsetY = { OFFSET_Y }, animationSpec = tween(
+                    durationMillis = DURATION_IN_MILLIS, easing = FastOutSlowInEasing
                 )
-            ) + fadeOut(animationSpec = tween(300))
+            ) + fadeOut(animationSpec = tween(DURATION_IN_MILLIS))
         }) {
             DescriptionScreen(navController, viewModel())
         }
         composable(Screen.Catalog.route, enterTransition = {
             slideInVertically(
-                initialOffsetY = { 600 }, animationSpec = tween(
-                    durationMillis = 300, easing = FastOutSlowInEasing
+                initialOffsetY = { OFFSET_Y }, animationSpec = tween(
+                    durationMillis = DURATION_IN_MILLIS, easing = FastOutSlowInEasing
                 )
-            ) + fadeIn(animationSpec = tween(300))
+            ) + fadeIn(animationSpec = tween(DURATION_IN_MILLIS))
         }, exitTransition = {
             slideOutVertically(
-                targetOffsetY = { 600 }, animationSpec = tween(
-                    durationMillis = 300, easing = FastOutSlowInEasing
+                targetOffsetY = { OFFSET_Y }, animationSpec = tween(
+                    durationMillis = DURATION_IN_MILLIS, easing = FastOutSlowInEasing
                 )
-            ) + fadeOut(animationSpec = tween(300))
+            ) + fadeOut(animationSpec = tween(DURATION_IN_MILLIS))
         }) {
             CatalogScreen(navController, viewModel())
         }

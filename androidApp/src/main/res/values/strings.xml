@@ -10,7 +10,8 @@
     <string name="min_max">H:%1$s°  L:%2$s°</string>
     <string name="retry">Retry</string>
     <string name="unknown_error">Unknown error</string>
-    <string name="description_search">Start typing the name of the locality</string>
+    <string name="description_search_start">Start typing the name of the place or tap</string>
+    <string name="description_location_end">Current location</string>
     <string name="empty_result_search">Nothing found</string>
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
@@ -22,7 +23,12 @@
     <string name="visibility">Visibility</string>
     <string name="visibility_meters">%1$s km</string>
     <string name="pressure">Pressure</string>
-    <string name="pressure_metric">%1$s \nmm Hg</string>
+    <string name="pressure_metric">%1$s \nhPa</string>
     <string name="uvi">UV index</string>
     <string name="description_title">%1$s° | %2$s</string>
+    <string name="location_permission_title">Location permission denied</string>
+    <string name="location_permission_description">Permission is required to get your current location</string>
+    <string name="location_disabled">Location is disabled</string>
+    <string name="location_disabled_description">Please turn on in settings to get current location</string>
+    <string name="open_settings">Open settings</string>
 </resources>

@@ -4,19 +4,11 @@ import com.kukhtoslava.weatherapp.*
 import com.kukhtoslava.weatherapp.data.AppErrorMapper
 import com.kukhtoslava.weatherapp.data.AppErrorMapperImpl
 import com.kukhtoslava.weatherapp.data.KMMPreference
-import com.kukhtoslava.weatherapp.data.repositoriesimpl.CacheRepositoryImpl
-import com.kukhtoslava.weatherapp.data.repositoriesimpl.InMemoryRepositoryImpl
-import com.kukhtoslava.weatherapp.data.repositoriesimpl.PlaceRepositoryImpl
-import com.kukhtoslava.weatherapp.data.repositoriesimpl.WeatherRepositoryImpl
-import com.kukhtoslava.weatherapp.data.source.PlaceApiService
-import com.kukhtoslava.weatherapp.data.source.PlaceApiServiceImpl
-import com.kukhtoslava.weatherapp.data.source.WeatherApiService
-import com.kukhtoslava.weatherapp.data.source.WeatherApiServiceImpl
-import com.kukhtoslava.weatherapp.domain.repositories.CacheRepository
-import com.kukhtoslava.weatherapp.domain.repositories.InMemoryRepository
-import com.kukhtoslava.weatherapp.domain.repositories.PlaceRepository
-import com.kukhtoslava.weatherapp.domain.repositories.WeatherRepository
+import com.kukhtoslava.weatherapp.data.repositoriesimpl.*
+import com.kukhtoslava.weatherapp.data.source.*
+import com.kukhtoslava.weatherapp.domain.repositories.*
 import com.kukhtoslava.weatherapp.utils.AppCoroutineDispatchers
+import com.kukhtoslava.weatherapp.utils.PermissionsWrapperController
 import io.ktor.client.*
 import org.kodein.di.*
 
@@ -60,6 +52,10 @@ val applicationModule = DI.Module(APP_MODULE) {
         InMemoryRepositoryImpl()
     }
 
+    bind<LocationRepository>() with singleton {
+        LocationRepositoryImpl(instance())
+    }
+
     bind<CityDBDatabase>() with singleton {
         provideCache()
     }
@@ -70,5 +66,13 @@ val applicationModule = DI.Module(APP_MODULE) {
 
     bind<AppErrorMapper>() with multiton {
         AppErrorMapperImpl(PlatformAppErrorMapper())
+    }
+
+    bind<LocationService>() with singleton {
+        provideLocationService()
+    }
+
+    bind<PermissionsWrapperController>() with singleton {
+        providePermissionsWrapperController()
     }
 }

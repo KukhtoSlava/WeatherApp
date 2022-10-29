@@ -1,6 +1,7 @@
 package com.kukhtoslava.weatherapp.data.source
 
 import com.kukhtoslava.weatherapp.PLACE_APPLICATION_KEY
+import com.kukhtoslava.weatherapp.domain.models.places.LocationInfo
 import com.kukhtoslava.weatherapp.domain.models.places.PlaceInfo
 import com.kukhtoslava.weatherapp.domain.models.places.Predictions
 import com.kukhtoslava.weatherapp.utils.AppCoroutineDispatchers
@@ -15,6 +16,8 @@ interface PlaceApiService {
     suspend fun getPredictions(query: String): Predictions
 
     suspend fun getCityByPlaceId(placeId: String): PlaceInfo
+
+    suspend fun getCityByLocation(lat: Double, lon: Double): LocationInfo
 }
 
 class PlaceApiServiceImpl(
@@ -42,6 +45,17 @@ class PlaceApiServiceImpl(
             }.build()).body()
         }
 
+    override suspend fun getCityByLocation(lat: Double, lon: Double): LocationInfo =
+        withContext(appCoroutineDispatchers.io) {
+            httpClient.get(URLBuilder(PLACE_BASE_URL).apply {
+                path("maps/api/place/nearbysearch/json")
+                parameters.append(KEY_APP, PLACE_APP_KEY)
+                parameters.append(KEY_RADIUS, VALUE_RADIUS)
+                parameters.append(KEY_LOCATION, "$lat,$lon")
+                parameters.append(KEY_LANGUAGE, VALUE_LANGUAGE)
+            }.build()).body()
+        }
+
     private companion object {
 
         private const val PLACE_APP_KEY = PLACE_APPLICATION_KEY
@@ -53,5 +67,8 @@ class PlaceApiServiceImpl(
         private const val VALUE_LANGUAGE = "en"
         private const val KEY_APP = "key"
         private const val KEY_PLACE_ID = "place_id"
+        private const val KEY_RADIUS = "radius"
+        private const val VALUE_RADIUS = "1500"
+        private const val KEY_LOCATION = "location"
     }
 }

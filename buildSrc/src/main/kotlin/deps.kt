@@ -118,6 +118,12 @@ object deps {
         const val flowCompose = "dev.icerock.moko:mvvm-flow-compose:$mokoMvvmVersion"
     }
 
+    object permissions {
+        private const val permissionVersion = "0.13.0"
+
+        const val core = "dev.icerock.moko:permissions:$permissionVersion"
+    }
+
     object navigation {
         private const val version = "0.26.4-beta"
 

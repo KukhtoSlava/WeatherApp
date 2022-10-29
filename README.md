@@ -34,3 +34,4 @@
 - [FlowRedux by hoc081098](https://github.com/hoc081098/GithubSearchKMM)
 - [SQLDelight](https://github.com/cashapp/sqldelight)
 - [MOKO-MVVM](https://github.com/icerockdev/moko-mvvm)
+- [MOKO-PERMISSIONS](https://github.com/icerockdev/moko-permissions)

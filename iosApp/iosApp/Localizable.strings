@@ -16,7 +16,9 @@
 "min_max" = "H:%ld°  L:%2d°";
 "retry" = "Retry";
 "unknown_error" = "Unknown error";
-"description_search" = "Start typing the name of the locality";
+"something_went_wrong" = "Something went wrong";
+"description_search_start" = "Start typing the name of the place or tap ";
+"description_location_end" = "Current location";
 "empty_result_search" = "Nothing found";
 "sunrise" = "Sunrise";
 "sunset" = "Sunset";
@@ -28,6 +30,11 @@
 "visibility" = "Visibility";
 "visibility_meters" = "%@ km";
 "pressure" = "Pressure";
-"pressure_metric" = "%@\nmm Hg";
+"pressure_metric" = "%@\nhPa";
 "uvi" = "UV index";
 "description_title" = "%ld° | %@";
+"location_permission_title" = "Location permission denied";
+"location_permission_description" = "Permission is required to get your current location";
+"location_disabled" = "Location is disabled";
+"location_disabled_description" = "Please turn on in settings to get current location";
+"open_settings" = "Settings";

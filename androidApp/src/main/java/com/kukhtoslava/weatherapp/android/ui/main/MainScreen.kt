@@ -42,6 +42,7 @@ import com.kukhtoslava.weatherapp.presentation.main.MainAction
 import com.kukhtoslava.weatherapp.presentation.main.MainEvent
 import com.kukhtoslava.weatherapp.presentation.main.MainState
 import com.kukhtoslava.weatherapp.presentation.main.MainViewModel
+import kotlinx.coroutines.flow.Flow
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -61,18 +62,11 @@ fun MainScreen(
     LaunchedEffect(Unit) {
         viewModel.dispatch(action = MainAction.LoadData)
     }
-    LaunchedEffect(eventFlow) {
-        eventFlow.collect { event ->
-            when (event) {
-                MainEvent.NavigationToCatalog -> navHostController.navigate(Screen.Catalog.route)
-                MainEvent.NavigationToDescription -> navHostController.navigate(Screen.Description.route)
-                MainEvent.NavigationToSearch -> navHostController.navigate(Screen.Search.route)
-            }
-        }
-    }
 
     MainUI(
         state = state,
+        eventFlow = eventFlow,
+        navHostController = navHostController,
         onAddPlaceClicked = { viewModel.dispatch(action = MainAction.AddCityClicked) },
         onDescriptionClicked = { viewModel.dispatch(action = MainAction.DescriptionClicked) },
         onCatalogClicked = { viewModel.dispatch(action = MainAction.CatalogClicked) },
@@ -83,6 +77,8 @@ fun MainScreen(
 @Composable
 fun MainUI(
     state: MainState,
+    eventFlow: Flow<MainEvent>,
+    navHostController: NavHostController,
     onAddPlaceClicked: () -> Unit,
     onDescriptionClicked: () -> Unit,
     onCatalogClicked: () -> Unit,
@@ -90,6 +86,16 @@ fun MainUI(
 ) {
 
     val context = LocalContext.current
+
+    LaunchedEffect(eventFlow) {
+        eventFlow.collect { event ->
+            when (event) {
+                MainEvent.NavigationToCatalog -> navHostController.navigate(Screen.Catalog.route)
+                MainEvent.NavigationToDescription -> navHostController.navigate(Screen.Description.route)
+                MainEvent.NavigationToSearch -> navHostController.navigate(Screen.Search.route)
+            }
+        }
+    }
 
     Surface {
         ConstraintLayout(

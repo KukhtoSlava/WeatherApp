@@ -2,6 +2,9 @@ package com.kukhtoslava.weatherapp.android.ui.search
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
@@ -21,10 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,6 +50,7 @@ import com.kukhtoslava.weatherapp.presentation.search.SearchAction
 import com.kukhtoslava.weatherapp.presentation.search.SearchEvent
 import com.kukhtoslava.weatherapp.presentation.search.SearchState
 import com.kukhtoslava.weatherapp.presentation.search.SearchViewModel
+import kotlinx.coroutines.flow.Flow
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -64,18 +75,11 @@ fun SearchScreen(
     LaunchedEffect(Unit) {
         viewModel.dispatch(action = SearchAction.CheckCurrentPlace)
     }
-    LaunchedEffect(eventFlow) {
-        eventFlow.collect { event ->
-            when (event) {
-                is SearchEvent.Close -> {
-                    navHostController.popBackStack()
-                }
-            }
-        }
-    }
 
     SearchUI(
         state = state,
+        eventFlow = eventFlow,
+        navHostController = navHostController,
         search = { query ->
             viewModel.dispatch(SearchAction.Search(term = query))
         },
@@ -90,22 +94,73 @@ fun SearchScreen(
                 )
             )
         },
+        currentLocationClicked = {
+            viewModel.dispatch(SearchAction.ClickLocation)
+        },
         closeClicked = {
             viewModel.dispatch(SearchAction.CloseScreen)
+        },
+        retryClicked = {
+            viewModel.dispatch(SearchAction.ClickLocation)
+        },
+        openSettingsClicked = {
+            val intent = Intent().apply {
+                action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                data = Uri.fromParts("package", context.packageName, null)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(intent)
+        },
+        openLocationSettingsClicked = {
+            val intent = Intent().apply {
+                action = Settings.ACTION_LOCATION_SOURCE_SETTINGS
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(intent)
         }
     )
 }
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchUI(
     state: SearchState,
+    eventFlow: Flow<SearchEvent>,
+    navHostController: NavHostController,
     search: (String) -> Unit,
     clear: () -> Unit,
     cityClicked: (placeId: String, placeName: String) -> Unit,
-    closeClicked: () -> Unit
+    currentLocationClicked: () -> Unit,
+    closeClicked: () -> Unit,
+    retryClicked: () -> Unit,
+    openSettingsClicked: () -> Unit,
+    openLocationSettingsClicked: () -> Unit
 ) {
+
+    val context = LocalContext.current
+
+    var deniedLocationDialog by remember { mutableStateOf(false) }
+    var deniedAlwaysLocationDialog by remember { mutableStateOf(false) }
+    var locationDisabledDialog by remember { mutableStateOf(false) }
+    var unknownErrorLocationDialog: String? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(eventFlow) {
+        eventFlow.collect { event ->
+            when (event) {
+                is SearchEvent.Close -> {
+                    navHostController.popBackStack()
+                }
+                SearchEvent.DeniedAlwaysMessage -> deniedAlwaysLocationDialog = true
+                SearchEvent.DeniedMessage -> deniedLocationDialog = true
+                is SearchEvent.ErrorMessage -> {
+                    unknownErrorLocationDialog =
+                        event.message ?: context.getString(R.string.unknown_error)
+                }
+                SearchEvent.DisabledMessage -> locationDisabledDialog = true
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -162,7 +217,9 @@ fun SearchUI(
                     } else if (state.predictions.isEmpty() && state.term.isNotEmpty()) {
                         EmptyList()
                     } else if (state.predictions.isEmpty() && state.term.isEmpty()) {
-                        StartSearchDescription()
+                        StartSearchDescription(
+                            currentLocationClicked = currentLocationClicked
+                        )
                     } else {
                         PredictionsList(
                             predictions = state.predictions,
@@ -171,6 +228,43 @@ fun SearchUI(
                                     placeId,
                                     placeName
                                 )
+                            }
+                        )
+                    }
+
+                    if (deniedLocationDialog) {
+                        DeniedLocationDialog(
+                            closeClicked = { deniedLocationDialog = false },
+                            retryClicked = {
+                                deniedLocationDialog = false
+                                retryClicked()
+                            }
+                        )
+                    }
+
+                    if (deniedAlwaysLocationDialog) {
+                        DeniedAlwaysLocationDialog(
+                            closeClicked = { deniedAlwaysLocationDialog = false },
+                            openSettingsClicked = {
+                                deniedAlwaysLocationDialog = false
+                                openSettingsClicked()
+                            }
+                        )
+                    }
+
+                    if (unknownErrorLocationDialog != null) {
+                        UnknownErrorLocationDialog(
+                            errorMessage = unknownErrorLocationDialog!!,
+                            closeClicked = { unknownErrorLocationDialog = null }
+                        )
+                    }
+
+                    if (locationDisabledDialog) {
+                        LocationDisableDialog(
+                            closeClicked = { locationDisabledDialog = false },
+                            openLocationSettingsClicked = {
+                                locationDisabledDialog = false
+                                openLocationSettingsClicked()
                             }
                         )
                     }
@@ -225,17 +319,51 @@ private fun EmptyList(
 
 @Composable
 private fun StartSearchDescription(
+    currentLocationClicked: () -> Unit
 ) {
+
+    val mAnnotatedLinkString = buildAnnotatedString {
+
+        val mStr = stringResource(id = R.string.description_search_start)
+        val mEnd = stringResource(id = R.string.description_location_end)
+        val mFull = "$mStr $mEnd"
+        val mStartIndex = mFull.indexOf(mEnd)
+        val mLetter = mEnd.length
+        val mEndIndex = mStartIndex + mLetter
+
+        append(mFull)
+        addStyle(
+            style = SpanStyle(
+                color = Whisper50,
+                textDecoration = TextDecoration.Underline
+            ), start = mStartIndex, end = mEndIndex
+        )
+
+        addStringAnnotation(
+            tag = "Current location",
+            annotation = "Current location",
+            start = mStartIndex,
+            end = mEndIndex
+        )
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        ClickableText(
             modifier = Modifier
                 .padding(32.dp),
-            text = stringResource(id = R.string.description_search),
-            style = Type.body4
+            text = mAnnotatedLinkString,
+            style = Type.body4,
+            onClick = {
+                mAnnotatedLinkString
+                    .getStringAnnotations("Current location", it, it)
+                    .firstOrNull()?.let { _ ->
+                        currentLocationClicked()
+                    }
+            }
         )
     }
 }
@@ -363,6 +491,266 @@ private fun SearchAppBar(
         ),
         shape = RoundedCornerShape(16.dp),
     )
+}
+
+@Composable
+fun DeniedLocationDialog(
+    closeClicked: () -> Unit,
+    retryClicked: () -> Unit
+) {
+    Dialog(onDismissRequest = { closeClicked() }) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize()
+                .background(Color.Transparent),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(id = R.string.location_permission_title),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .fillMaxWidth(),
+                    style = Type.body4,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = stringResource(id = R.string.location_permission_description),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 20.dp, start = 25.dp, end = 25.dp)
+                        .fillMaxWidth(),
+                    style = Type.header4
+                )
+            }
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+
+                TextButton(onClick = {
+                    closeClicked()
+                }) {
+
+                    Text(
+                        stringResource(id = R.string.close),
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                        style = Type.body
+                    )
+                }
+                TextButton(onClick = {
+                    retryClicked()
+                }) {
+                    Text(
+                        stringResource(id = R.string.retry),
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                        style = Type.body
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DeniedAlwaysLocationDialog(
+    closeClicked: () -> Unit,
+    openSettingsClicked: () -> Unit
+) {
+    Dialog(onDismissRequest = { closeClicked() }) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize()
+                .background(Color.Transparent),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(id = R.string.location_permission_title),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .fillMaxWidth(),
+                    style = Type.body4,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = stringResource(id = R.string.location_permission_description),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 20.dp, start = 25.dp, end = 25.dp)
+                        .fillMaxWidth(),
+                    style = Type.header4
+                )
+            }
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+
+                TextButton(onClick = {
+                    closeClicked()
+                }) {
+
+                    Text(
+                        stringResource(id = R.string.close),
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                        style = Type.body
+                    )
+                }
+                TextButton(onClick = {
+                    openSettingsClicked()
+                }) {
+                    Text(
+                        stringResource(id = R.string.open_settings),
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                        style = Type.body
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LocationDisableDialog(
+    openLocationSettingsClicked: () -> Unit,
+    closeClicked: () -> Unit
+) {
+    Dialog(onDismissRequest = { closeClicked() }) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize()
+                .background(Color.Transparent),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(id = R.string.location_disabled),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .fillMaxWidth(),
+                    style = Type.body4,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = stringResource(id = R.string.location_disabled_description),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 20.dp, start = 25.dp, end = 25.dp)
+                        .fillMaxWidth(),
+                    style = Type.header4
+                )
+            }
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+
+                TextButton(onClick = {
+                    closeClicked()
+                }) {
+
+                    Text(
+                        stringResource(id = R.string.close),
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                        style = Type.body
+                    )
+                }
+                TextButton(onClick = {
+                    openLocationSettingsClicked()
+                }) {
+                    Text(
+                        stringResource(id = R.string.open_settings),
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                        style = Type.body
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun UnknownErrorLocationDialog(
+    errorMessage: String,
+    closeClicked: () -> Unit
+) {
+    Dialog(onDismissRequest = { closeClicked() }) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize()
+                .background(Color.Transparent),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(id = R.string.unknown_error),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 5.dp)
+                        .fillMaxWidth(),
+                    style = Type.body4,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = errorMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .padding(top = 20.dp, start = 25.dp, end = 25.dp)
+                        .fillMaxWidth(),
+                    style = Type.header4
+                )
+            }
+            TextButton(
+                onClick = { closeClicked() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+
+                Text(
+                    stringResource(id = R.string.close),
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+                    style = Type.body
+                )
+            }
+        }
+    }
 }
 
 @Preview(showSystemUi = true)
