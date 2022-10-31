@@ -30,7 +30,7 @@
 "visibility" = "Visibility";
 "visibility_meters" = "%@ km";
 "pressure" = "Pressure";
-"pressure_metric" = "%@\nhPa";
+"pressure_metric" = "%@ hPa";
 "uvi" = "UV index";
 "description_title" = "%ld° | %@";
 "location_permission_title" = "Location permission denied";

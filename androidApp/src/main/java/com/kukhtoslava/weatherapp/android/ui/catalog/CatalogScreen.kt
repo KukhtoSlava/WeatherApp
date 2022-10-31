@@ -19,7 +19,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -216,15 +218,17 @@ fun PlaceItem(
 
     val context = LocalContext.current
 
-    Box(
+    ConstraintLayout(
         modifier = Modifier
             .clickable {
                 itemClicked(dbPlace.placeId, dbPlace.name)
             }
-            .padding(16.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentSize()
     ) {
+
+        val (
+            temperatureRef, tempDistinctionRef, cityNameRef, imageRef, backgroundImageRef, weatherDescriptionRef
+        ) = createRefs()
 
         val temperature = context.getString(
             R.string.degree,
@@ -241,73 +245,84 @@ fun PlaceItem(
 
         Image(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(alignment = Alignment.BottomCenter),
+                .fillMaxSize()
+                .constrainAs(backgroundImageRef) {
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+                .padding(20.dp),
+            contentDescription = null,
             painter = painterResource(id = R.drawable.place_background),
             contentScale = ContentScale.Crop,
-            contentDescription = null
+            alignment = Alignment.Center,
         )
 
         Text(
             modifier = Modifier
-                .wrapContentWidth()
-                .padding(top = 32.dp, start = 24.dp)
-                .align(alignment = Alignment.TopStart)
-                .wrapContentWidth(Alignment.Start)
-                .wrapContentHeight(),
+                .wrapContentSize()
+                .constrainAs(temperatureRef) {
+                    start.linkTo(backgroundImageRef.start)
+                    top.linkTo(backgroundImageRef.top)
+                }
+                .padding(top = 36.dp, start = 36.dp),
             text = temperature,
             style = Type.body8,
+            maxLines = 1
+        )
+
+        Text(
+            modifier = Modifier
+                .wrapContentSize()
+                .constrainAs(cityNameRef) {
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                }
+                .padding(bottom = 36.dp, start = 36.dp),
+            text = place,
+            textAlign = TextAlign.Start,
+            style = Type.body10,
+            maxLines = 1
+        )
+
+        Text(
+            modifier = Modifier
+                .wrapContentSize()
+                .constrainAs(tempDistinctionRef) {
+                    start.linkTo(parent.start)
+                    bottom.linkTo(cityNameRef.top)
+                }
+                .padding(start = 36.dp),
+            text = minAndMaxTemperature,
+            style = Type.body9,
+            maxLines = 1
+        )
+
+        Text(
+            modifier = Modifier
+                .wrapContentSize()
+                .constrainAs(weatherDescriptionRef) {
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                }
+                .padding(bottom = 36.dp, end = 36.dp),
+            text = weatherDescription,
+            textAlign = TextAlign.End,
+            style = Type.body11,
             maxLines = 1
         )
 
         Image(
             modifier = Modifier
                 .size(160.dp)
-                .align(alignment = Alignment.TopEnd),
+                .constrainAs(imageRef) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                },
             painter = painterResource(id = iconId),
             contentDescription = null,
-            contentScale = ContentScale.Crop,
-            alignment = Alignment.TopEnd
-        )
-
-        Column(
-            modifier = Modifier
-                .padding(start = 32.dp, bottom = 18.dp)
-                .wrapContentSize()
-                .align(alignment = Alignment.BottomStart),
-        ) {
-
-            Text(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .wrapContentWidth(Alignment.Start)
-                    .wrapContentHeight(),
-                text = minAndMaxTemperature,
-                style = Type.body9,
-                maxLines = 1
-            )
-
-            Text(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .wrapContentWidth(Alignment.Start)
-                    .wrapContentHeight(),
-                text = place,
-                style = Type.body10,
-                maxLines = 1
-            )
-        }
-
-        Text(
-            modifier = Modifier
-                .padding(end = 32.dp, bottom = 18.dp)
-                .wrapContentWidth()
-                .align(alignment = Alignment.BottomEnd)
-                .wrapContentWidth(Alignment.End)
-                .wrapContentHeight(),
-            text = weatherDescription,
-            style = Type.body11,
-            maxLines = 1
+            contentScale = ContentScale.Fit
         )
     }
 }

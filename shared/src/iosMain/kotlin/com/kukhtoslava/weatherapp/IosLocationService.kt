@@ -26,8 +26,10 @@ class IosLocationService : LocationService {
                         lat = lat,
                         lng = lon
                     )
-                    locationManager.stopUpdatingLocation()
-                    continuation.resume(location) {}
+                    if (continuation.isActive) {
+                        continuation.resume(location) {}
+                        locationManager.stopUpdatingLocation()
+                    }
                 },
                 error = { throwable ->
                     continuation.resumeWithException(throwable)

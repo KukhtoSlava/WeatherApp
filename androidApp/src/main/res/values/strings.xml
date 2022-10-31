@@ -17,13 +17,13 @@
     <string name="sunset">Sunset</string>
     <string name="feels_like">Feels like</string>
     <string name="wind">Wind</string>
-    <string name="speed">%1$s \nkm/h</string>
+    <string name="speed">%1$s km/h</string>
     <string name="humidity">Humidity</string>
     <string name="humidity_percent">%1$s%%</string>
     <string name="visibility">Visibility</string>
     <string name="visibility_meters">%1$s km</string>
     <string name="pressure">Pressure</string>
-    <string name="pressure_metric">%1$s \nhPa</string>
+    <string name="pressure_metric">%1$s hPa</string>
     <string name="uvi">UV index</string>
     <string name="description_title">%1$s° | %2$s</string>
     <string name="location_permission_title">Location permission denied</string>

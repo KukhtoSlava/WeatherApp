@@ -44,6 +44,7 @@ struct MainScreen: View {
                         .foregroundColor(.white)
                         .font(.system(size: 20))
                 }
+                .padding(.top, 20)
                 Spacer()
                 if !UIUtils.isIphoneSE3orLower() {
                     Image("home")

@@ -117,11 +117,12 @@ fun MainUI(
 
             val (
                 tabBar, modal, home, weather, subtrack, searchBtn,
-                descriptionBtn, catalogBtn
+                descriptionBtn, catalogBtn, forecastTitle, container
             ) = createRefs()
 
             Image(
-                painter = painterResource(id = R.drawable.home), contentDescription = null,
+                painter = painterResource(id = R.drawable.home),
+                contentDescription = null,
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
                 modifier = Modifier
@@ -133,29 +134,42 @@ fun MainUI(
                     }
             )
 
-            Column(
+            Image(
+                painter = painterResource(id = R.drawable.modal_background),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .constrainAs(modal) {
                         bottom.linkTo(parent.bottom)
                     }
-                    .paint(
-                        painterResource(id = R.drawable.modal_background),
-                        contentScale = ContentScale.FillWidth
-                    ),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
+            )
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 22.dp, top = 22.dp, end = 22.dp)
+                    .constrainAs(forecastTitle) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(modal.top)
+                    },
+                style = Type.header,
+                text = stringResource(id = R.string.hourly_forecast),
+                maxLines = 1
+            )
+
+            Box(
+                modifier = Modifier
+                    .wrapContentSize()
+                    .constrainAs(container) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(forecastTitle.bottom)
+                        bottom.linkTo(subtrack.top)
+                    }
             ) {
-
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(22.dp),
-                    style = Type.header,
-                    text = stringResource(id = R.string.hourly_forecast),
-                    maxLines = 1
-                )
-
                 if (state.isLoading) {
                     enableDescription = false
                     CircularProgressIndicator(

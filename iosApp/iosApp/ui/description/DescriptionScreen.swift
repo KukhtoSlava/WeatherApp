@@ -193,7 +193,7 @@ extension DescriptionScreen {
             }
             HStack {
                 Text(value)
-                    .font(.system(size: 36))
+                    .font(.system(size: 32))
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                     .padding([.leading, .top, .trailing], 16)
